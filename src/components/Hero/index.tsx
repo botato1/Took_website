@@ -18,14 +18,6 @@ const Hero = () => {
                   광고를 통해 무료 제품체험을 제공하는 신개념 마케팅 플랫폼. 직접 뛰는 광고와 혁신 광고형 자판기를 통해 
                   친환경적이고 효과적인 광고 솔루션을 제공합니다.
                 </p>
-                <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-                  <Link
-                    href="https://nextjstemplates.com/templates/saas-starter-startup"
-                    className="rounded-xs bg-primary px-8 py-4 text-base font-semibold text-white duration-300 ease-in-out hover:bg-primary/80"
-                  >
-                    🔥 광고 문의하기
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
