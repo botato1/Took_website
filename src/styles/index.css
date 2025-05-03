@@ -3,6 +3,10 @@ layer(base);
 
 @import 'tailwindcss';
 
+@import "slick-carousel/slick/slick.css"; 
+@import "slick-carousel/slick/slick-theme.css";
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -132,4 +136,31 @@ layer(base);
   input[type="checkbox"]:checked ~ label span svg {
     @apply inline-flex;
   }
+}
+
+
+/* slick dots custom style */
+.slick-dots {
+  position: absolute;
+  bottom: 10px;              /* 닷의 위치를 하단으로 설정 */
+  left: 50%;                 /* 가로 중앙 정렬 */
+  transform: translateX(-50%);  /* 정확한 가운데 정렬 */
+  display: flex;
+  justify-content: center;   /* 가운데 정렬 */
+  z-index: 10;               /* 다른 요소들 위로 */
+}
+
+.slick-dots li {
+  margin: 0 5px;             /* 닷들 간의 간격 */
+}
+
+.slick-dots li button:before {
+  font-size: 20px;           /* 닷의 크기 */
+  color: red;                /* 닷의 기본 색상 */
+  opacity: 0.7;              /* 닷의 투명도 */
+}
+
+.slick-dots li.slick-active button:before {
+  color: red;                /* 활성화된 닷의 색상 */
+  opacity: 1;                /* 활성화된 닷은 불투명 */
 }
