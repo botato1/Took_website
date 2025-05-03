@@ -9,7 +9,7 @@ const Features = () => {
         <div className="container">
           <SectionTitle
             title="Main Features"
-            paragraph="There are many variations of passages of Lorem Ipsum available but the majority have suffered alteration in some form."
+            paragraph="TOOK의 혁신적인 광고 솔루션은 광고주와 소비자 모두에게 가치를 제공합니다."
             center
           />
 
