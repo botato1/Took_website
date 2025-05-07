@@ -178,7 +178,8 @@ const Header = () => {
             </div>
           </div>
         </div>
-      </header>
+        </header>
+      <div className={`h-[80px] ${sticky ? "h-[64px]" : "h-[95px]"}`}></div>
     </>
   );
 };
