@@ -22,9 +22,13 @@ const Header = () => {
       setSticky(false);
     }
   };
+  
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
-  });
+    return () => {
+      window.removeEventListener("scroll", handleStickyNavbar);
+    };
+  }, []);
 
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
@@ -41,20 +45,19 @@ const Header = () => {
   return (
     <>
       <header
-        className={`header top-0 left-0 z-40 flex w-full items-center ${
+        className={`header top-0 left-0 z-40 flex w-full items-center fixed ${
           sticky
-            ? "dark:bg-gray-dark dark:shadow-sticky-dark shadow-sticky fixed z-9999 bg-white/80 backdrop-blur-xs transition"
-            : "absolute bg-transparent"
+            ? "dark:bg-gray-dark dark:shadow-sticky-dark shadow-sticky z-9999 bg-white/80 backdrop-blur-xs transition"
+            : "bg-transparent"
         }`}
+        role="banner"
       >
         <div className="container">
           <div className="relative -mx-4 flex items-center justify-between">
             <div className="w-60 max-w-full px-4 xl:mr-12">
               <Link
                 href="/"
-                className={`header-logo block w-full ${
-                  sticky ? "py-5 lg:py-2" : "py-8"
-                } `}
+                className="header-logo block w-full py-5 lg:py-2"
               >
                 <Image
                   src="/images/logo/logo-2.svg"
@@ -73,12 +76,12 @@ const Header = () => {
               </Link>
             </div>
             <div className="flex w-full items-center justify-between px-4">
-              <div>
+              <div className="lg:block">
                 <button
                   onClick={navbarToggleHandler}
                   id="navbarToggler"
                   aria-label="Mobile Menu"
-                  className="ring-primary absolute top-1/2 right-4 block translate-y-[-50%] rounded-lg px-3 py-[6px] focus:ring-2 lg:hidden"
+                  className="ring-primary absolute right-4 top-1/2 block -translate-y-1/2 rounded-lg px-3 py-[6px] focus:ring-2 lg:hidden"
                 >
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
@@ -98,10 +101,10 @@ const Header = () => {
                 </button>
                 <nav
                   id="navbarCollapse"
-                  className={`navbar border-body-color/50 dark:border-body-color/20 dark:bg-dark absolute right-0 z-30 w-[250px] rounded border-[.5px] bg-white px-6 py-4 duration-300 lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
+                  className={`navbar border-body-color/50 dark:border-body-color/20 dark:bg-dark absolute right-0 top-full z-30 w-[250px] rounded border-[.5px] bg-white px-6 py-4 duration-300 lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
                     navbarOpen
-                      ? "visibility top-full opacity-100"
-                      : "invisible top-[120%] opacity-0"
+                      ? "visibility opacity-100"
+                      : "invisible opacity-0"
                   }`}
                 >
                   <ul className="block lg:flex lg:space-x-12">
@@ -110,7 +113,7 @@ const Header = () => {
                         {menuItem.path ? (
                           <Link
                             href={menuItem.path}
-                            className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
+                            className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 ${
                               usePathName === menuItem.path
                                 ? "text-primary dark:text-white"
                                 : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"
@@ -122,7 +125,7 @@ const Header = () => {
                           <>
                             <p
                               onClick={() => handleSubmenu(index)}
-                              className="text-dark group-hover:text-primary flex cursor-pointer items-center justify-between py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 dark:text-white/70 dark:group-hover:text-white"
+                              className="text-dark group-hover:text-primary flex cursor-pointer items-center justify-between py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 dark:text-white/70 dark:group-hover:text-white"
                             >
                               {menuItem.title}
                               <span className="pl-3">
@@ -178,8 +181,9 @@ const Header = () => {
             </div>
           </div>
         </div>
-        </header>
-      <div className={`h-[80px] ${sticky ? "h-[64px]" : "h-[120px]"}`}></div>
+      </header>
+      {/* 고정된 높이 스페이서 */}
+      <div className="h-[90px]"></div>
     </>
   );
 };
