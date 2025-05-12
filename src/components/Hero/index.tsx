@@ -50,7 +50,7 @@ const Hero = () => {
             <img
               src={slide.image}
               alt={`TOOK 광고형 자판기 - ${slide.title}`}
-              className="w-full h-[600px] object-cover"
+              className="w-full h-[805px] object-cover"
             />
             
 
