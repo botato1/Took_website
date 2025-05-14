@@ -1,25 +1,24 @@
 "use client";
 
 import React from "react";
+import Image from "next/image"; 
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const Hero = () => {
-  // 슬라이더 설정 수정 - 더 느린 속도로 변경
   const settings = {
     dots: true,
     infinite: true,
-    speed: 800,              
+    speed: 800,
     autoplay: true,
-    autoplaySpeed: 6000,      
+    autoplaySpeed: 6000,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: false,
-    fade: false,               
-    pauseOnHover: false       
+    fade: false,
+    pauseOnHover: false
   };
-
 
   const slides = [
     {
@@ -43,17 +42,21 @@ const Hero = () => {
   ];
 
   return (
-    <div className="w-full overflow-hidden"> 
+    <div className="w-full overflow-hidden -mt-[90px]"> 
       <Slider {...settings} className="hero-slider">
         {slides.map((slide) => (
-          <div key={slide.id} className="relative">
-            <img
-              src={slide.image}
-              alt={`TOOK 광고형 자판기 - ${slide.title}`}
-              className="w-full h-[500px] object-cover"
-            />
+          <div key={slide.id} className="relative h-[60vh]">
+            <div className="relative w-full h-full">
+              <Image
+                src={slide.image}
+                alt={`TOOK 광고형 자판기 - ${slide.title}`}
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
             
-
             <div className="absolute inset-0 flex flex-col items-center justify-end pb-32 bg-gradient-to-t from-black/70 via-black/40 to-transparent text-white text-center px-4">
               <div className="max-w-[800px] animate-fade-in">
                 <h1 className="text-3xl md:text-5xl font-bold mb-4 text-shadow">
@@ -68,11 +71,10 @@ const Hero = () => {
         ))}
       </Slider>
       
-
       <style jsx global>{`
         /* 슬라이더 dots 스타일 커스텀 */
         .hero-slider .slick-dots {
-          bottom: 20px;
+          bottom: 40px; /* dots 위치 조정 */
         }
         .hero-slider .slick-dots li button:before {
           color: white;

@@ -24,26 +24,23 @@ const AboutSectionOne = () => {
           <div className="-mx-4 flex flex-wrap items-center">
             <div className="w-full px-4 lg:w-1/2">
               <SectionTitle
-                title="Crafted for Startup, SaaS and Business Sites."
-                paragraph="The main ‘thrust’ is to focus on educating attendees on how to best protect highly vulnerable business applications with interactive panel discussions and roundtables."
+                title="광고로 얻은 리워드, 실생활로 돌아오다"
+                paragraph="Took은 광고를 소비자에게 '보여주는' 방식이 아닌, '참여하는' 방식으로 바꾸었습니다. 광고 시청만으로도 무료 제품을 받는 경험을 통해, 브랜드와 소비자 간의 새로운 상호작용을 창출합니다."
                 mb="44px"
               />
 
-              <div
-                className="mb-12 max-w-[570px] lg:mb-0"
-                data-wow-delay=".15s"
-              >
+              <div className="mb-12 max-w-[570px] lg:mb-0" data-wow-delay=".15s">
                 <div className="mx-[-12px] flex flex-wrap">
                   <div className="w-full px-3 sm:w-1/2 lg:w-full xl:w-1/2">
-                    <List text="Premium quality" />
-                    <List text="Tailwind CSS" />
-                    <List text="Use for lifetime" />
+                    <List text="소비자에게 실질적인 보상 제공" />
+                    <List text="강요가 아닌 자발적 광고 참여" />
+                    <List text="다양한 캠페인과 참여 유도 기능" />
                   </div>
 
                   <div className="w-full px-3 sm:w-1/2 lg:w-full xl:w-1/2">
-                    <List text="Next.js" />
-                    <List text="Rich documentation" />
-                    <List text="Developer friendly" />
+                    <List text="모듈형 자판기 시스템" />
+                    <List text="광고, 설문조사, 캠페인으로 상호작용" />
+                    <List text="지속 가능하고 친환경적인 모델" />
                   </div>
                 </div>
               </div>

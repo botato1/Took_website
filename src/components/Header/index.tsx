@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import { useAuth } from "@/Auth/authcontext";
 
@@ -20,12 +19,14 @@ const Header = () => {
   // Sticky Navbar
   const [sticky, setSticky] = useState(false);
   const handleStickyNavbar = () => {
-    if (window.scrollY >= 80) {
+    // Hero 섹션의 높이를 기준으로 스크롤 여부 판단 (500px는 Hero 이미지 높이)
+    if (window.scrollY >= 500) {
       setSticky(true);
     } else {
       setSticky(false);
     }
   };
+  
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
     return () => {
@@ -42,21 +43,16 @@ const Header = () => {
       setOpenIndex(index);
     }
   };
-  // 로그아웃 핸들러
-  const handleSignOut = () => {
-    logout();
-  };
-  
 
   const usePathName = usePathname();
 
   return (
     <>
       <header
-        className={`header top-0 left-0 z-40 flex w-full items-center fixed ${
+        className={`header top-0 left-0 z-40 flex w-full items-center fixed transition-all duration-300 ${
           sticky
-            ? "dark:bg-gray-dark dark:shadow-sticky-dark shadow-sticky z-9999 bg-white/80 backdrop-blur-xs transition"
-            : "bg-transparent"
+            ? "bg-white shadow-sticky" // Hero 영역 벗어난 후 - 흰색 배경
+            : "bg-transparent" // Hero 영역 - 투명 배경
         }`}
         role="banner"
       >
@@ -68,18 +64,11 @@ const Header = () => {
                 className="header-logo block w-full py-5 lg:py-2"
               >
                 <Image
-                  src="/images/logo/logo-2.svg"
+                  src={"/images/logo/logo-2.svg"}
                   alt="logo"
                   width={140}
                   height={30}
-                  className="w-full dark:hidden"
-                />
-                <Image
-                  src="/images/logo/logo.svg"
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="hidden w-full dark:block"
+                  className="w-full"
                 />
               </Link>
             </div>
@@ -92,29 +81,33 @@ const Header = () => {
                   className="ring-primary absolute right-4 top-1/2 block -translate-y-1/2 rounded-lg px-3 py-[6px] focus:ring-2 lg:hidden"
                 >
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
-                      navbarOpen ? "top-[7px] rotate-45" : " "
-                    }`}
+                    className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
+                      sticky ? "bg-black" : "bg-white"
+                    } ${navbarOpen ? "top-[7px] rotate-45" : ""}`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
-                      navbarOpen ? "opacity-0" : " "
-                    }`}
+                    className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
+                      sticky ? "bg-black" : "bg-white"
+                    } ${navbarOpen ? "opacity-0" : ""}`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
-                      navbarOpen ? "top-[-8px] -rotate-45" : " "
-                    }`}
+                    className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
+                      sticky ? "bg-black" : "bg-white"
+                    } ${navbarOpen ? "top-[-8px] -rotate-45" : ""}`}
                   />
                 </button>
                 <nav
-                  id="navbarCollapse"
-                  className={`navbar border-body-color/50 dark:border-body-color/20 dark:bg-dark absolute right-0 top-full z-30 w-[250px] rounded border-[.5px] bg-white px-6 py-4 duration-300 lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
-                    navbarOpen
-                      ? "visibility opacity-100"
-                      : "invisible opacity-0"
-                  }`}
-                >
+                    id="navbarCollapse"
+                    className={`navbar absolute right-0 top-full z-30 w-[250px] rounded border-[.5px] px-6 py-4 duration-300 lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
+                      navbarOpen
+                        ? "visibility opacity-100"
+                        : "invisible opacity-0"
+                    } ${
+                      sticky
+                        ? "border-body-color/50 bg-white" 
+                        : "border-white/10 bg-black/50 backdrop-blur-sm"
+                    }`}
+                  >
                   <ul className="block lg:flex lg:space-x-12">
                     {menuData.map((menuItem, index) => (
                       <li key={index} className="group relative">
@@ -123,8 +116,10 @@ const Header = () => {
                             href={menuItem.path}
                             className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 ${
                               usePathName === menuItem.path
-                                ? "text-primary dark:text-white"
-                                : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"
+                                ? sticky ? "text-primary" : "text-white"
+                                : sticky 
+                                  ? "text-dark hover:text-primary" 
+                                  : "text-white hover:text-white/80"
                             }`}
                           >
                             {menuItem.title}
@@ -133,7 +128,11 @@ const Header = () => {
                           <>
                             <p
                               onClick={() => handleSubmenu(index)}
-                              className="text-dark group-hover:text-primary flex cursor-pointer items-center justify-between py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 dark:text-white/70 dark:group-hover:text-white"
+                              className={`flex cursor-pointer items-center justify-between py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 ${
+                                sticky 
+                                  ? "text-dark group-hover:text-primary" 
+                                  : "text-white group-hover:text-white/80"
+                              }`}
                             >
                               {menuItem.title}
                               <span className="pl-3">
@@ -148,7 +147,7 @@ const Header = () => {
                               </span>
                             </p>
                             <div
-                              className={`submenu dark:bg-dark relative top-full left-0 rounded-sm bg-white transition-[top] duration-300 group-hover:opacity-100 lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
+                              className={`submenu relative top-full left-0 rounded-sm bg-white transition-[top] duration-300 group-hover:opacity-100 lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
                                 openIndex === index ? "block" : "hidden"
                               }`}
                             >
@@ -156,7 +155,7 @@ const Header = () => {
                                 <Link
                                   href={submenuItem.path}
                                   key={index}
-                                  className="text-dark hover:text-primary block rounded-sm py-2.5 text-sm lg:px-3 dark:text-white/70 dark:hover:text-white"
+                                  className="text-dark hover:text-primary block rounded-sm py-2.5 text-sm lg:px-3"
                                 >
                                   {submenuItem.title}
                                 </Link>
@@ -174,35 +173,40 @@ const Header = () => {
                   <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
                 ) : isLoggedIn ? (
                   <div className="flex items-center">
-                    <span className="text-dark hidden md:inline-block text-sm font-medium dark:text-white mr-4">
+                    <span className={`hidden md:inline-block text-sm font-medium mr-4 ${
+                      sticky ? "text-dark" : "text-white"
+                    }`}>
                       {user?.name || "사용자"}
                     </span>
                     <button
                       onClick={logout}
-                      className="text-dark hover:text-primary text-sm font-medium hover:underline dark:text-white/80 dark:hover:text-white"
+                      className={`text-sm font-medium hover:underline ${
+                        sticky ? "text-dark hover:text-primary" : "text-white hover:text-white/80"
+                      }`}
                     >
                       로그아웃
                     </button>
                   </div>
                 ) : (
                   <>
-                    <Link
-                      href="/signin"
-                      className="text-dark hidden px-7 py-3 text-base font-medium hover:opacity-70 md:block dark:text-white"
-                    >
-                      로그인
-                    </Link>
-                    <Link
-                      href="/signup"
-                      className="ease-in-up shadow-btn hover:shadow-btn-hover hidden rounded-sm bg-primary px-8 py-3 text-base font-medium text-white transition duration-300 hover:bg-opacity-90 md:block md:px-9 lg:px-6 xl:px-9"
-                    >
-                      회원가입
-                    </Link>
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                      <Link
+                        href="/signin"
+                        className={`px-4 py-2 text-sm font-medium hover:opacity-70 ${
+                          sticky ? "text-dark" : "text-white"
+                        }`}
+                      >
+                        로그인
+                      </Link>
+                      <Link
+                        href="/signup"
+                        className="ease-in-up shadow-btn hover:shadow-btn-hover rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white transition duration-300 hover:bg-opacity-90"
+                      >
+                        회원가입
+                      </Link>
+                    </div>
                   </>
                 )}
-                <div>
-                  <ThemeToggler />
-                </div>
               </div>
             </div>
           </div>

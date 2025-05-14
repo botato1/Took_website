@@ -2,12 +2,22 @@
 
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useAuth } from "@/Auth/authcontext";
 
 const SigninPage = () => {
   const { login, googleLogin } = useAuth();
   const router = useRouter();
+  
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <SigninContent login={login} googleLogin={googleLogin} router={router} />
+    </Suspense>
+  );
+};
+
+// 내부 컴포넌트로 실제 내용을 분리
+function SigninContent({ login, googleLogin, router }) {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   
@@ -20,7 +30,7 @@ const SigninPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 입력 필드 변경 처리
+  // 나머지 핸들러 함수와 JSX는 원래 코드와 동일하게 유지
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({

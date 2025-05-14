@@ -56,7 +56,7 @@ const SignupPage = () => {
     
     try {
       await register(formData.name, formData.email, formData.password);
-      router.push("/contact/page");
+      router.push("/contact");
     } catch (error) {
       setError(error.message || "회원가입에 실패했습니다.");
     } finally {
@@ -132,9 +132,8 @@ const SignupPage = () => {
                       </defs>
                     </svg>
                   </span>
-                  구글 계정으로 가입
+                  구글 계정으로 로그인
                 </button>
-
                 <div className="mb-8 flex items-center justify-center">
                   <span className="bg-body-color/50 hidden h-[1px] w-full max-w-[60px] sm:block"></span>
                   <p className="text-body-color w-full px-5 text-center text-base font-medium">

@@ -81,9 +81,7 @@ const register = async (name, email, password) => {
   };
 
   // 구글 로그인
-  const googleLogin = async () => {
-    // 구글 로그인은 리다이렉트 방식으로 동작하므로, 
-    // 백엔드 라우트로 바로 이동
+  const googleLogin = () => {
     window.location.href = '/api/google_login';
   };
 
