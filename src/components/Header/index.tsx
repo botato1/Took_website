@@ -9,7 +9,9 @@ import { useAuth } from "@/Auth/authcontext";
 const Header = () => {
   const { user, isLoading, logout } = useAuth();
   const isLoggedIn = !!user;
-
+  const pathname = usePathname(); 
+  const isMainPage = pathname === "/"; 
+  
   // Navbar toggle
   const [navbarOpen, setNavbarOpen] = useState(false);
   const navbarToggleHandler = () => {
@@ -19,7 +21,6 @@ const Header = () => {
   // Sticky Navbar
   const [sticky, setSticky] = useState(false);
   const handleStickyNavbar = () => {
-    // Hero 섹션의 높이를 기준으로 스크롤 여부 판단 (500px는 Hero 이미지 높이)
     if (window.scrollY >= 500) {
       setSticky(true);
     } else {
@@ -43,17 +44,15 @@ const Header = () => {
       setOpenIndex(index);
     }
   };
-
-  const usePathName = usePathname();
+   
+  const headerClass = isMainPage 
+    ? (sticky ? "bg-white shadow-sticky" : "bg-transparent") 
+    : "bg-white shadow-sticky";
 
   return (
     <>
       <header
-        className={`header top-0 left-0 z-40 flex w-full items-center fixed transition-all duration-300 ${
-          sticky
-            ? "bg-white shadow-sticky" // Hero 영역 벗어난 후 - 흰색 배경
-            : "bg-transparent" // Hero 영역 - 투명 배경
-        }`}
+        className={`header top-0 left-0 z-40 flex w-full items-center fixed transition-all duration-300 ${headerClass}`}
         role="banner"
       >
         <div className="container">
@@ -82,17 +81,17 @@ const Header = () => {
                 >
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
-                      sticky ? "bg-black" : "bg-white"
+                      !isMainPage || sticky ? "bg-black" : "bg-white"
                     } ${navbarOpen ? "top-[7px] rotate-45" : ""}`}
                   />
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
-                      sticky ? "bg-black" : "bg-white"
+                      !isMainPage || sticky ? "bg-black" : "bg-white"
                     } ${navbarOpen ? "opacity-0" : ""}`}
                   />
                   <span
                     className={`relative my-1.5 block h-0.5 w-[30px] transition-all duration-300 ${
-                      sticky ? "bg-black" : "bg-white"
+                      !isMainPage || sticky ? "bg-black" : "bg-white"
                     } ${navbarOpen ? "top-[-8px] -rotate-45" : ""}`}
                   />
                 </button>
@@ -103,9 +102,9 @@ const Header = () => {
                         ? "visibility opacity-100"
                         : "invisible opacity-0"
                     } ${
-                      sticky
+                      !isMainPage || sticky
                         ? "border-body-color/50 bg-white" 
-                        : "border-white/10 bg-black/50 backdrop-blur-sm"
+                        : "border-white/10 bg-black/50"
                     }`}
                   >
                   <ul className="block lg:flex lg:space-x-12">
@@ -115,9 +114,9 @@ const Header = () => {
                           <Link
                             href={menuItem.path}
                             className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 ${
-                              usePathName === menuItem.path
-                                ? sticky ? "text-primary" : "text-white"
-                                : sticky 
+                              pathname === menuItem.path
+                                ? (!isMainPage || sticky) ? "text-primary" : "text-white"
+                                : (!isMainPage || sticky) 
                                   ? "text-dark hover:text-primary" 
                                   : "text-white hover:text-white/80"
                             }`}
@@ -129,7 +128,7 @@ const Header = () => {
                             <p
                               onClick={() => handleSubmenu(index)}
                               className={`flex cursor-pointer items-center justify-between py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-4 ${
-                                sticky 
+                                (!isMainPage || sticky) 
                                   ? "text-dark group-hover:text-primary" 
                                   : "text-white group-hover:text-white/80"
                               }`}
@@ -147,15 +146,23 @@ const Header = () => {
                               </span>
                             </p>
                             <div
-                              className={`submenu relative top-full left-0 rounded-sm bg-white transition-[top] duration-300 group-hover:opacity-100 lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
+                              className={`submenu relative top-full left-0 rounded-sm transition-[top] duration-300 group-hover:opacity-100 lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
                                 openIndex === index ? "block" : "hidden"
+                              } ${
+                                (!isMainPage || sticky) 
+                                  ? "bg-white" 
+                                  : "bg-gray-900 text-white"
                               }`}
                             >
-                              {menuItem.submenu.map((submenuItem, index) => (
+                              {menuItem.submenu.map((submenuItem, idx) => (
                                 <Link
                                   href={submenuItem.path}
-                                  key={index}
-                                  className="text-dark hover:text-primary block rounded-sm py-2.5 text-sm lg:px-3"
+                                  key={idx}
+                                  className={`block rounded-sm py-2.5 text-sm lg:px-3 ${
+                                    (!isMainPage || sticky)
+                                      ? "text-dark hover:text-primary"
+                                      : "text-white hover:text-white/80"
+                                  }`}
                                 >
                                   {submenuItem.title}
                                 </Link>
@@ -169,19 +176,17 @@ const Header = () => {
                 </nav>
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                {isLoading ? (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
-                ) : isLoggedIn ? (
+                {isLoading ? null : isLoggedIn ? (
                   <div className="flex items-center">
                     <span className={`hidden md:inline-block text-sm font-medium mr-4 ${
-                      sticky ? "text-dark" : "text-white"
+                      (!isMainPage || sticky) ? "text-dark" : "text-white"
                     }`}>
                       {user?.name || "사용자"}
                     </span>
                     <button
                       onClick={logout}
                       className={`text-sm font-medium hover:underline ${
-                        sticky ? "text-dark hover:text-primary" : "text-white hover:text-white/80"
+                        (!isMainPage || sticky) ? "text-dark hover:text-primary" : "text-white hover:text-white/80"
                       }`}
                     >
                       로그아웃
@@ -193,7 +198,7 @@ const Header = () => {
                       <Link
                         href="/signin"
                         className={`px-4 py-2 text-sm font-medium hover:opacity-70 ${
-                          sticky ? "text-dark" : "text-white"
+                          (!isMainPage || sticky) ? "text-dark" : "text-white"
                         }`}
                       >
                         로그인
@@ -212,7 +217,6 @@ const Header = () => {
           </div>
         </div>
       </header>
-      {/* 고정된 높이 스페이서 */}
       <div className="h-[90px]"></div>
     </>
   );

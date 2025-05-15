@@ -1,8 +1,12 @@
 "use client";
 
+import { useForm, ValidationError } from '@formspree/react';
 import ProtectedRoute from "@/components/Protect/protectroute.jsx";
 
 export default function ContactPage() {
+  const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+  const [state, handleSubmit] = useForm(formspreeId);
+
   return (
     <ProtectedRoute>
       <section id="contact" className="overflow-hidden py-16 md:py-20 lg:py-28">
@@ -16,64 +20,123 @@ export default function ContactPage() {
                 <h2 className="mb-3 text-2xl font-bold text-black dark:text-white sm:text-3xl lg:text-2xl xl:text-3xl">
                   광고 문의하기
                 </h2>
-                <p className="mb-12 text-base font-medium text-body-color">
+                <p className="mb-6 text-base font-medium text-body-color">
                   TOOK의 혁신적인 광고 서비스에 대한 문의를 남겨주시면 담당자가 이메일로 빠르게 답변드립니다.
                 </p>
-                <form>
-                  <div className="-mx-4 flex flex-wrap">
-                    <div className="w-full px-4 md:w-1/2">
-                      <div className="mb-8">
-                        <label
-                          htmlFor="name"
-                          className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                        >
-                          이름
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="이름을 입력하세요"
-                          className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
-                        />
-                      </div>
-                    </div>
-                    <div className="w-full px-4 md:w-1/2">
-                      <div className="mb-8">
-                        <label
-                          htmlFor="email"
-                          className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                        >
-                          이메일
-                        </label>
-                        <input
-                          type="email"
-                          placeholder="이메일 주소를 입력하세요"
-                          className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
-                        />
-                      </div>
-                    </div>
-                    <div className="w-full px-4">
-                      <div className="mb-8">
-                        <label
-                          htmlFor="message"
-                          className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                        >
-                          문의 내용
-                        </label>
-                        <textarea
-                          name="message"
-                          rows={5}
-                          placeholder="문의 내용을 입력하세요"
-                          className="border-stroke w-full resize-none rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div className="w-full px-4">
-                      <button className="rounded-xs bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark">
-                        문의하기
-                      </button>
-                    </div>
+                
+                {state.succeeded ? (
+                  <div className="mb-6 rounded-md bg-green-50 p-6 text-center dark:bg-green-900/20">
+                    <h3 className="mb-2 text-xl font-bold text-green-700 dark:text-green-400">문의가 성공적으로 전송되었습니다</h3>
+                    <p className="text-green-600 dark:text-green-300">빠른 시일 내에 답변 드리겠습니다.</p>
                   </div>
-                </form>
+                ) : (
+                  <form onSubmit={handleSubmit}>
+                    <div className="-mx-4 flex flex-wrap">
+                      <div className="w-full px-4 md:w-1/2">
+                        <div className="mb-8">
+                          <label
+                            htmlFor="name"
+                            className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                          >
+                            이름 / 회사명
+                          </label>
+                          <input
+                            id="name"
+                            type="text"
+                            name="name"
+                            placeholder="이름을 입력하세요"
+                            className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                            required
+                          />
+                          <ValidationError prefix="Name" field="name" errors={state.errors} className="mt-1 text-sm text-red-500" />
+                        </div>
+                      </div>
+                      <div className="w-full px-4 md:w-1/2">
+                        <div className="mb-8">
+                          <label
+                            htmlFor="email"
+                            className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                          >
+                            이메일 / 회사 이메일
+                          </label>
+                          <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            placeholder="이메일 주소를 입력하세요"
+                            className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                            required
+                          />
+                          <ValidationError prefix="Email" field="email" errors={state.errors} className="mt-1 text-sm text-red-500" />
+                        </div>
+                      </div>
+                      <div className="w-full px-4 md:w-1/2">
+                        <div className="mb-8">
+                          <label
+                            htmlFor="phone"
+                            className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                          >
+                            전화번호
+                          </label>
+                          <input
+                            id="phone"
+                            type="tel"
+                            name="phone"
+                            placeholder="전화번호를 입력하세요"
+                            className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                          />
+                          <ValidationError prefix="Phone" field="phone" errors={state.errors} className="mt-1 text-sm text-red-500" />
+                        </div>
+                      </div>
+                      <div className="w-full px-4 md:w-1/2">
+                        <div className="mb-8">
+                          <label
+                            htmlFor="company"
+                            className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                          >
+                            회사/기관
+                          </label>
+                          <input
+                            id="company"
+                            type="text"
+                            name="company"
+                            placeholder="소속 회사/기관을 입력하세요"
+                            className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                          />
+                          <ValidationError prefix="Company" field="company" errors={state.errors} className="mt-1 text-sm text-red-500" />
+                        </div>
+                      </div>
+                      <div className="w-full px-4">
+                        <div className="mb-8">
+                          <label
+                            htmlFor="message"
+                            className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                          >
+                            문의 내용
+                          </label>
+                          <textarea
+                            id="message"
+                            name="message"
+                            rows={5}
+                            placeholder="문의 내용을 입력하세요"
+                            className="border-stroke w-full resize-none rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                            required
+                          ></textarea>
+                          <ValidationError prefix="Message" field="message" errors={state.errors} className="mt-1 text-sm text-red-500" />
+                        </div>
+                      </div>
+                      <div className="w-full px-4">
+                        <button 
+                          type="submit" 
+                          disabled={state.submitting}
+                          className="rounded-xs bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark disabled:opacity-70"
+                        >
+                          {state.submitting ? "전송 중..." : "문의하기"}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
             <div className="w-full px-4 lg:w-5/12 xl:w-4/12">

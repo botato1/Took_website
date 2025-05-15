@@ -40,7 +40,7 @@ export async function GET(req) {
       }
     );
 
-    const { sub, email, name, picture } = profileResponse.data;
+    const { sub, email, name } = profileResponse.data;
 
     // 사용자 조회 또는 생성
     let users = await executeQuery({
@@ -82,7 +82,7 @@ export async function GET(req) {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
     );
 
     // NextResponse 생성 및 쿠키 설정

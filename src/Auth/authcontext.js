@@ -1,38 +1,48 @@
-// src/Auth/authcontext.js
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie';
 import axios from 'axios';
 
-// 인증 컨텍스트 초기화
 export const AuthContext = createContext({
   user: null,
   isLoading: true,
-  isAuthenticated: true,
+  isAuthenticated: false,
   login: async (email, password) => {},
   register: async (name, email, password) => {},
   googleLogin: async () => {},
   logout: async () => {},
 });
 
-// 인증 상태 관리 Provider
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '',
+  withCredentials: true 
+});
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // 사용자 정보 로딩
+  // 사용자 정보 로딩 - 애플리케이션 초기화 시
   useEffect(() => {
     const loadUser = async () => {
-      // 쿠키는 HTTP Only로 설정되어 있으므로 클라이언트에서 직접 접근 불가
-      // API 요청 시 쿠키가 자동으로 전송됨
+      if (localStorage.getItem('isLoggedOut') === 'true') {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const res = await axios.get('/api/authme');
         setUser(res.data);
+        localStorage.removeItem('isLoggedOut'); 
       } catch (error) {
-        console.error('Failed to load user:', error);
+        if (error.response?.status === 401) {
+          console.log('사용자가 인증되지 않았습니다 - 정상적인 상태');
+        } else {
+          console.error('사용자 정보 로딩 중 예상치 못한 오류:', error);
+        }
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -43,75 +53,74 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // 로그인 함수
-const login = async (email, password) => {
-  try {
-    setIsLoading(true);
-    console.log('로그인 요청:', { email }); // 디버깅 로그 추가
-    
-    const response = await axios.post('/api/login', { email, password });
-    console.log('로그인 응답:', response.data); // 응답 데이터 확인
-    
-    setUser(response.data.user);
-    return response.data;
-  } catch (error) {
-    console.error('로그인 오류 상세:', error);
-    console.error('응답 데이터:', error.response?.data);
-    console.error('오류 상태 코드:', error.response?.status);
-    
-    throw error.response?.data || { message: '로그인 중 오류가 발생했습니다.' };
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-  // 회원가입 함수
-const register = async (name, email, password) => {
+  const login = async (email, password) => {
     try {
       setIsLoading(true);
-      const response = await axios.post('/api/signup', { name, email, password });
+      const response = await api.post('/api/login', { email, password });
       setUser(response.data.user);
-      
+      localStorage.removeItem('isLoggedOut'); 
       return response.data;
     } catch (error) {
-      console.error('Registration error:', error);
-      throw error.response?.data || { message: '회원가입 중 오류가 발생했습니다.' };
+      const errorMsg = error.response?.data?.message || '로그인 중 오류가 발생했습니다';
+      console.error('로그인 오류:', errorMsg);
+      throw { message: errorMsg };
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // 구글 로그인
-  const googleLogin = () => {
-    window.location.href = '/api/google_login';
   };
 
   // 로그아웃 함수
   const logout = async () => {
     try {
       setIsLoading(true);
-      await axios.post('/api/logout');
+      await api.post('/api/logout');
       setUser(null);
+      localStorage.setItem('isLoggedOut', 'true'); 
       router.push('/');
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('로그아웃 오류:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 인증 컨텍스트 값
-  const value = {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
-    login,
-    register,
-    googleLogin,
-    logout,
-  };
+  // 회원가입 함수
+const register = async (name, email, password) => {
+  try {
+    setIsLoading(true);
+    const response = await axios.post('/api/signup', { name, email, password });
+    setUser(response.data.user);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return response.data;
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error.response?.data || { message: '회원가입 중 오류가 발생했습니다.' };
+  } finally {
+    setIsLoading(false);
+  }
 };
 
-// 인증 컨텍스트 사용 훅
+// 구글 로그인
+const googleLogin = () => {
+  window.location.href = '/api/google_login';
+};
+
+
+  return (
+    <AuthContext.Provider 
+      value={{
+        user,
+        isLoading,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        register,
+        googleLogin,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
 export const useAuth = () => useContext(AuthContext);
