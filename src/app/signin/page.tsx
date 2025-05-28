@@ -213,12 +213,12 @@ function SigninContent({ login, googleLogin, router }) {
                       </label>
                     </div>
                     <div>
-                      <a
-                        href="#0"
+                      <Link
+                        href="/forgot_password"
                         className="text-primary text-sm font-medium hover:underline"
                       >
                         비밀번호를 잊으셨나요?
-                      </a>
+                      </Link>
                     </div>
                   </div>
                   <div className="mb-6">
