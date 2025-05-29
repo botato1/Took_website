@@ -5,7 +5,7 @@ import { useState } from "react";
 import axios from "axios";
 
 const ForgotPasswordPage = () => {
-  const [step, setStep] = useState(1); // 1: 이메일/이름 입력, 2: 인증코드 입력
+  const [step, setStep] = useState(1); 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,7 +20,7 @@ const ForgotPasswordPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setError(""); // 입력 시 에러 메시지 클리어
+    setError(""); 
   };
 
   // 1단계: 인증코드 요청
@@ -42,7 +42,7 @@ const ForgotPasswordPage = () => {
       });
 
       setMessage(response.data.message);
-      setStep(2); // 2단계로 이동
+      setStep(2); 
     } catch (error) {
       setError(error.response?.data?.message || "오류가 발생했습니다.");
     } finally {
@@ -50,7 +50,6 @@ const ForgotPasswordPage = () => {
     }
   };
 
-  // 2단계: 비밀번호 재설정
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
@@ -73,14 +72,13 @@ const ForgotPasswordPage = () => {
     setError("");
 
     try {
-      const response = await axios.put('/api/reset-password', {
+      const response = await axios.put('/api/reset_password', {
         email: formData.email,
         resetCode: formData.resetCode,
         newPassword: formData.newPassword,
       });
 
       setMessage(response.data.message);
-      // 성공 시 로그인 페이지로 이동하도록 안내
       setTimeout(() => {
         window.location.href = '/signin';
       }, 2000);
@@ -120,7 +118,6 @@ const ForgotPasswordPage = () => {
               )}
 
               {step === 1 ? (
-                // 1단계: 이름/이메일 입력
                 <form onSubmit={handleRequestCode}>
                   <div className="mb-8">
                     <label htmlFor="name" className="text-dark mb-3 block text-sm dark:text-white">
@@ -163,7 +160,6 @@ const ForgotPasswordPage = () => {
                   </div>
                 </form>
               ) : (
-                // 2단계: 인증코드 및 새 비밀번호 입력
                 <form onSubmit={handleResetPassword}>
                   <div className="mb-8">
                     <label htmlFor="resetCode" className="text-dark mb-3 block text-sm dark:text-white">
