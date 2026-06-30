@@ -221,7 +221,7 @@ npm start
 
 ## 📞 문의
 
-프로젝트 관련 문의: [took.official@example.com](mailto:took.official@example.com)
+프로젝트 관련 문의: [awd384@naver.com](mailto:awd384@naver.com)
 
 ---
 
